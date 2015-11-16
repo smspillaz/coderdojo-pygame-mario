@@ -9,12 +9,14 @@ pygame.display.set_caption("Super Mario Test")
 screen = pygame.display.set_mode((640, 480))
 
 
-class Mario(pygame.sprite.Sprite):
+class Mario(pygame.sprite.Sprite, PhysicsBody):
     def __init__(self, screen):
         pygame.sprite.Sprite.__init__(self)
         self._images, self._rects = zip(*[load_keyed_image("mario_sprite_1.png"),
                                           load_keyed_image("mario_sprite_2.png"),
                                           load_keyed_image("mario_sprite_3.png")])
+
+        PhysicsBody.__init__(self, self._rects, screen.get_rect().height - 32)
 
         self.switch_to_stationary_sprite()
 
@@ -31,15 +33,19 @@ class Mario(pygame.sprite.Sprite):
         self.update_sprite()
 
     def move(self, key):
-        amount = (5, 5)
+        amount = (0.5, 0.5)
         direction = dict([
             (K_RIGHT, (1, 0)),
             (K_LEFT, (-1, 0))
         ])
 
+        self.acceleration = (self.acceleration[0] + amount[0] * direction[key][0],
+                             self.acceleration[1] + amount[1] * direction[key][1])
+
+    def apply_movement(self, screen):
         for rect in self._rects:
-            rect.move_ip(amount[0] * direction[key][0],
-                         amount[1] * direction[key][1])
+            rect.move_ip(self.velocity[0], self.velocity[1])
+            rect.bottom = PhysicsBody.clamp(rect.bottom, 0, screen.get_height() - 32)
 
 
 class TileGrid(object):
@@ -97,6 +103,12 @@ while 1:
         if event.type == KEYDOWN:
             if event.key in (K_RIGHT, K_LEFT):
                 mario.move(event.key)
+
+    # Physics
+    if not mario.integrate():
+        mario.switch_to_stationary_sprite()
+    else:
+        mario.apply_movement(screen)
 
     screen.blit(background, (0, 0))
     tile_grid.draw(screen)
