@@ -71,6 +71,11 @@ class Mario(pygame.sprite.Sprite, PhysicsBody):
             self.acceleration = (self.acceleration[0] + amount[0] * direction[key][0],
                                  self.acceleration[1] + amount[1] * direction[key][1])
 
+    def jump(self):
+        if self.touching_ground():
+            self.acceleration = (self.acceleration[0],
+                                 self.acceleration[1] - 60)
+
     def apply_movement(self, screen):
         if self.velocity[0] != 0:
             if math.fabs(self.velocity[0]) > 2:
@@ -141,6 +146,8 @@ while 1:
             if event.key in (K_RIGHT, K_LEFT):
                 if not mario.apply_direction(event.key):
                     mario.move(event.key)
+            if event.key == K_UP:
+                mario.jump()
         if event.type == KEYUP:
             if event.key in (K_RIGHT, K_LEFT):
                 mario.come_to_stop()
