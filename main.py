@@ -33,6 +33,17 @@ class TileGrid(object):
         for i in range(0, self.grid_width):
             self.grid[(self.grid_height - 1) * self.grid_width + i] = self.ground_tile_image
 
+    def draw(self, screen):
+        for index, tile in enumerate(self.grid):
+            if not tile:
+                continue
+
+            x_grid_position = index % self.grid_width
+            y_grid_position = index // self.grid_width
+
+            screen.blit(tile, (x_grid_position * 16, y_grid_position * 16))
+
+
 def make_background(image_name, screen):
     background, background_rect = load_image(image_name)
     background_rect.width, background_rect.height = screen.get_size()
@@ -51,5 +62,6 @@ while 1:
                 pass
 
     screen.blit(background, (0, 0))
+    tile_grid.draw(screen)
     pygame.display.flip()
     time.sleep(16.66 / 1000)
