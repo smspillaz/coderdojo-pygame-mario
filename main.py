@@ -21,7 +21,17 @@ class TileGrid(object):
         self.right_tile_image, self.right_tile_rect = load_image("ground_tiles_1_3.png")
         self.ground_tile_image, self.ground_tile_rect = load_image("ground_tiles_1_4.png")
 
+        # Now, populate the bottom part of the grid with floor tiles
 
+        # The grassy part of the floor
+        self.grid[(self.grid_height - 2) * self.grid_width] = self.left_tile_image
+        self.grid[(self.grid_height - 1) * self.grid_width - 1] = self.right_tile_image
+        for i in range(0, self.grid_width - 2):
+            self.grid[(self.grid_height - 2) * self.grid_width + 1 + i] = self.center_tile_image
+
+        # The solid part of the floor
+        for i in range(0, self.grid_width):
+            self.grid[(self.grid_height - 1) * self.grid_width + i] = self.ground_tile_image
 
 def make_background(image_name, screen):
     background, background_rect = load_image(image_name)
