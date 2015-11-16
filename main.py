@@ -43,6 +43,14 @@ class Mario(pygame.sprite.Sprite, PhysicsBody):
                              self.acceleration[1] + amount[1] * direction[key][1])
 
     def apply_movement(self, screen):
+        if self.velocity[0] != 0:
+            if math.fabs(self.velocity[0]) > 2:
+                # Always pick between running sprites
+                self._active_sprite = (self._active_sprite % 2) + 1
+            else:
+                self._active_sprite = (self._active_sprite + 1) % 3
+            self.update_sprite()
+
         for rect in self._rects:
             rect.move_ip(self.velocity[0], self.velocity[1])
             rect.bottom = PhysicsBody.clamp(rect.bottom, 0, screen.get_height() - 32)
