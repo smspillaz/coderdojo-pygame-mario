@@ -8,6 +8,29 @@ import sys
 pygame.display.set_caption("Super Mario Test")
 screen = pygame.display.set_mode((640, 480))
 
+
+class Mario(pygame.sprite.Sprite):
+    def __init__(self, screen):
+        pygame.sprite.Sprite.__init__(self)
+        self._images, self._rects = zip(*[load_keyed_image("mario_sprite_1.png"),
+                                          load_keyed_image("mario_sprite_2.png"),
+                                          load_keyed_image("mario_sprite_3.png")])
+
+        self.switch_to_stationary_sprite()
+
+        # Start in the bottom-left corner
+        for rect in self._rects:
+            rect.y = screen.get_height() - (self.rect.height + 32)
+
+    def update_sprite(self):
+        self.image = self._images[self._active_sprite]
+        self.rect = self._rects[self._active_sprite]
+
+    def switch_to_stationary_sprite(self):
+        self._active_sprite = 0
+        self.update_sprite()
+
+
 class TileGrid(object):
     def __init__(self, screen):
         super(TileGrid, self).__init__()
@@ -52,6 +75,7 @@ def make_background(image_name, screen):
                                    background_rect.height))
 
 background = make_background("background.png", screen)
+tile_grid = TileGrid(screen)
 
 while 1:
     for event in pygame.event.get():
