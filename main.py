@@ -30,6 +30,17 @@ class Mario(pygame.sprite.Sprite):
         self._active_sprite = 0
         self.update_sprite()
 
+    def move(self, key):
+        amount = (5, 5)
+        direction = dict([
+            (K_RIGHT, (1, 0)),
+            (K_LEFT, (-1, 0))
+        ])
+
+        for rect in self._rects:
+            rect.move_ip(amount[0] * direction[key][0],
+                         amount[1] * direction[key][1])
+
 
 class TileGrid(object):
     def __init__(self, screen):
@@ -85,7 +96,7 @@ while 1:
             sys.exit()
         if event.type == KEYDOWN:
             if event.key in (K_RIGHT, K_LEFT):
-                pass
+                mario.move(event.key)
 
     screen.blit(background, (0, 0))
     tile_grid.draw(screen)
