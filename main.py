@@ -76,6 +76,8 @@ def make_background(image_name, screen):
 
 background = make_background("background.png", screen)
 tile_grid = TileGrid(screen)
+mario = Mario(screen)
+mario_sprites = pygame.sprite.RenderPlain(mario)
 
 while 1:
     for event in pygame.event.get():
@@ -87,5 +89,6 @@ while 1:
 
     screen.blit(background, (0, 0))
     tile_grid.draw(screen)
+    mario_sprites.draw(screen)
     pygame.display.flip()
     time.sleep(16.66 / 1000)
