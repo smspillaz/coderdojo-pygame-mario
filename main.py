@@ -5,6 +5,7 @@ import math
 import time
 import sys
 
+pygame.display.set_caption("Super Mario Test")
 screen = pygame.display.set_mode((640, 480))
 
 
