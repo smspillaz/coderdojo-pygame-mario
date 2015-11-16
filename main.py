@@ -32,6 +32,16 @@ class Mario(pygame.sprite.Sprite, PhysicsBody):
         self._active_sprite = 0
         self.update_sprite()
 
+    def apply_direction(self, direction):
+        if self.direction != direction:
+            self._images = [pygame.transform.flip(i, True, False)
+                            for i in self._images]
+            self.direction = direction
+            self.come_to_stop()
+            return True
+
+        return False
+
     def come_to_stop(self):
         # Determine what kind of friction to apply
         if self.direction == K_RIGHT:
@@ -129,7 +139,8 @@ while 1:
             sys.exit()
         if event.type == KEYDOWN:
             if event.key in (K_RIGHT, K_LEFT):
-                mario.move(event.key)
+                if not mario.apply_direction(event.key):
+                    mario.move(event.key)
         if event.type == KEYUP:
             if event.key in (K_RIGHT, K_LEFT):
                 mario.come_to_stop()
