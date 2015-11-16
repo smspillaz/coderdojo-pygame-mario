@@ -32,6 +32,21 @@ class Mario(pygame.sprite.Sprite, PhysicsBody):
         self._active_sprite = 0
         self.update_sprite()
 
+    def come_to_stop(self):
+        # Determine what kind of friction to apply
+        if self.direction == K_RIGHT:
+            if self.velocity[0] > 0:
+                self.friction_multiplier = (-5, self.velocity[1])
+            elif self.velocity[0] < 0:
+                self.friction_multiplier = (-10, self.velocity[1])
+                self.switch_to_stationary_sprite()
+        elif self.direction == K_LEFT:
+            if self.velocity[0] > 0:
+                self.friction_multiplier = (-10, self.velocity[1])
+                self.switch_to_stationary_sprite()
+            elif self.velocity[0] < 0:
+                self.friction_multiplier = (-5, self.velocity[1])
+
     def move(self, key):
         amount = (0.5, 0.5)
         direction = dict([
@@ -39,8 +54,12 @@ class Mario(pygame.sprite.Sprite, PhysicsBody):
             (K_LEFT, (-1, 0))
         ])
 
-        self.acceleration = (self.acceleration[0] + amount[0] * direction[key][0],
-                             self.acceleration[1] + amount[1] * direction[key][1])
+        # Check if we should finish coming to a stop first
+        if self.friction_multiplier[0] != 0:
+            self.come_to_stop()
+        else:
+            self.acceleration = (self.acceleration[0] + amount[0] * direction[key][0],
+                                 self.acceleration[1] + amount[1] * direction[key][1])
 
     def apply_movement(self, screen):
         if self.velocity[0] != 0:
@@ -111,6 +130,9 @@ while 1:
         if event.type == KEYDOWN:
             if event.key in (K_RIGHT, K_LEFT):
                 mario.move(event.key)
+        if event.type == KEYUP:
+            if event.key in (K_RIGHT, K_LEFT):
+                mario.come_to_stop()
 
     # Physics
     if not mario.integrate():
